@@ -3,6 +3,7 @@ package com.example.myapplication2;
 import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -71,14 +73,14 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textLat = (TextView) findViewById(R.id.lat);
-        String tlat = (String) textLat.getText();
+
+        //int tlatt=Integer.valueOf(tlat);
         textLong = (TextView) findViewById(R.id.lon);
-        String tlong = (String) textLong.getText();
+
+        initGMaps();
 
         // initialize GoogleMaps
-        if (tlat == "10.7473045" && tlong == "79.84") {
-            initGMaps();
-            }
+
 
 
             // create GoogleApiClient
@@ -115,27 +117,9 @@ public class MainActivity extends AppCompatActivity
         googleApiClient.disconnect();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate( R.menu.main_menu, menu );
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch ( item.getItemId() ) {
-            case R.id.geofence: {
-                startGeofence();
-                return true;
-            }
-            case R.id.clear: {
-                clearGeofence();
-                return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
+
+
 
     private final int REQ_PERMISSION = 999;
 
@@ -282,8 +266,20 @@ public class MainActivity extends AppCompatActivity
     private void writeActualLocation(Location location) {
         textLat.setText( "Lat: " + location.getLatitude() );
         textLong.setText( "Long: " + location.getLongitude() );
+        String tlat = (String) textLat.getText();
+        String tlong = (String) textLong.getText();
+        double tlatt =location.getLatitude();
+        double tlongg=location.getLongitude();
 
-        markerLocation(new LatLng(location.getLatitude(), location.getLongitude()));
+
+
+        if ((tlatt >= 36.0000000 && tlatt<=38.5000000) && (tlongg >= -130.00000 && tlongg<= -120.0000)) {
+            initGMaps();
+
+            markerLocation(new LatLng(tlatt, tlongg));
+            startGeofence();
+        }
+
     }
 
     private void writeLastLocation() {
